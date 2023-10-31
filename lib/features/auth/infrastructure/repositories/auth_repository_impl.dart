@@ -4,9 +4,9 @@ import 'package:teslo_shop/features/auth/infrastructure/infrastructure.dart';
 class AuthRepositoryImpl extends AuthRepository {
   final AuthDatasource datasource;
 
-  AuthRepositoryImpl(
+  AuthRepositoryImpl({
     AuthDatasource? datasource,
-  ) : datasource = datasource ?? AuthDatasourceImpl();
+  }) : datasource = datasource ?? AuthDatasourceImpl();
 
   @override
   Future<User> checkAuthStatus(String token) {
