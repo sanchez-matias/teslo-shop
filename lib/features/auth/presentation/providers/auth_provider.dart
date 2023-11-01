@@ -24,6 +24,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
     } on WrongCredentials {
       logout('Wrong credentials');
+    } on ConnectionTimeout {
+      logout('Timeout');
     } catch (e) {
       logout('Undefined error');
     }
