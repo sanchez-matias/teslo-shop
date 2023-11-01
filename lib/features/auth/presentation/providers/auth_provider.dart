@@ -21,14 +21,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       final user = await authRepository.login(email, password);
       _setLoggedUser(user);
-
-    } on WrongCredentials {
-      logout('Wrong credentials');
-    } on ConnectionTimeout {
-      logout('Timeout');
-    } catch (e) {
-      logout('Undefined error');
+      
+    } on CustomError catch (e) {
+      logout(e.message);
     }
+    logout('Undefined error');
   }
 
   void registerUser(String email, String password) async {}
@@ -38,7 +35,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   void _setLoggedUser(User user) {
     // todo: save token phisically
     state = state.copyWith(user: user, authStatus: AuthStatus.authenticated);
-    print('authenticated'); 
+    print('authenticated');
   }
 
   Future<void> logout([String? errorMessage]) async {

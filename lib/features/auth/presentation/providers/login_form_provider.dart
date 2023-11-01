@@ -1,3 +1,4 @@
+//import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
 import 'package:teslo_shop/features/auth/presentation/providers/auth_provider.dart';
@@ -97,5 +98,6 @@ class LoginFormNotifier extends StateNotifier<LoginFormState> {
       password: password,
       isValid: Formz.validate([email, password]),
     );
+    //FocusManager.instance.primaryFocus?.unfocus();
   }
 }

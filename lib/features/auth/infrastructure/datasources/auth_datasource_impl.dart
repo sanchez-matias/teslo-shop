@@ -22,14 +22,16 @@ class AuthDatasourceImpl extends AuthDatasource {
 
       final user = UserMapper.userJsonToEntity(response.data);
       return user;
-
     } on DioException catch (e) {
-      if (e.response?.statusCode == 401) throw WrongCredentials();
-      if (e.type == DioExceptionType.connectionTimeout) throw ConnectionTimeout();
-      throw CustomError('Unknown error', 1);
-      
+      if (e.response?.statusCode == 401) {
+        throw CustomError(e.response?.data['message'] ?? 'Credentials are not valid');
+      }
+      if (e.type == DioExceptionType.connectionTimeout) {
+        throw CustomError(e.response?.data['message'] ?? 'Conection Timeout');
+      }
+      throw Exception();
     } catch (e) {
-      throw CustomError('Unknown error', 1);
+      throw Exception();
     }
   }
 
