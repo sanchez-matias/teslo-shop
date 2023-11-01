@@ -15,13 +15,37 @@ class AuthNotifier extends StateNotifier<AuthState> {
     required this.authRepository,
   }) : super(AuthState());
 
-  void loginUser(String email, String password) async {}
+  Future<void> loginUser(String email, String password) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    try {
+      final user = await authRepository.login(email, password);
+      _setLoggedUser(user);
+
+    } on WrongCredentials {
+      logout('Wrong credentials');
+    } catch (e) {
+      logout('Undefined error');
+    }
+  }
 
   void registerUser(String email, String password) async {}
 
   void checkAuthStatus(String email, String password) async {}
 
-  Future<void> logout() async {}
+  void _setLoggedUser(User user) {
+    // todo: save token phisically
+    state = state.copyWith(user: user, authStatus: AuthStatus.authenticated);
+    print('authenticated'); 
+  }
+
+  Future<void> logout([String? errorMessage]) async {
+    state.copyWith(
+      authStatus: AuthStatus.notAuthenticated,
+      user: null,
+      errorMessage: errorMessage,
+    );
+  }
 }
 
 enum AuthStatus { checking, authenticated, notAuthenticated }
