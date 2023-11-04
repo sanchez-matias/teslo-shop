@@ -7,9 +7,28 @@ class AuthDatasourceImpl extends AuthDatasource {
   final dio = Dio(BaseOptions(baseUrl: Environment.apiUrl));
 
   @override
-  Future<User> checkAuthStatus(String token) {
-    // TODO: implement checkAuthStatus
-    throw UnimplementedError();
+  Future<User> checkAuthStatus(String token) async {
+    try {
+      final response = await dio.get(
+        '/auth/check-status',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      final user = UserMapper.userJsonToEntity(response.data);
+      return user;
+
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        throw CustomError(
+            e.response?.data['message'] ?? 'Unauthorized: Token is not valid');
+      }
+      if (e.type == DioExceptionType.connectionTimeout) {
+        throw CustomError(e.response?.data['message'] ?? 'Conection Timeout');
+      }
+      throw Exception();
+    } catch (e) {
+      throw Exception();
+    }
   }
 
   @override
@@ -24,7 +43,8 @@ class AuthDatasourceImpl extends AuthDatasource {
       return user;
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
-        throw CustomError(e.response?.data['message'] ?? 'Credentials are not valid');
+        throw CustomError(
+            e.response?.data['message'] ?? 'Credentials are not valid');
       }
       if (e.type == DioExceptionType.connectionTimeout) {
         throw CustomError(e.response?.data['message'] ?? 'Conection Timeout');
