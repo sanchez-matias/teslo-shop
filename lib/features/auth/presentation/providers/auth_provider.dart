@@ -33,8 +33,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
       _setLoggedUser(user);
     } on CustomError catch (e) {
       logout(e.message);
+    } catch (e) {
+      logout('Undefined error');
     }
-    logout('Undefined error');
+    
   }
 
   void registerUser(String email, String password) async {}
