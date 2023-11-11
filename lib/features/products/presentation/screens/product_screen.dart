@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:teslo_shop/features/products/presentation/providers/product_provider.dart';
 
-class ProductScreen extends ConsumerStatefulWidget {
+// We are using a StateNotifierProvider with the .autodispose modification
+// so if we want to use its dependency here we need to preserve the state
+// until we don't need it anymore. For that, using a ConsumerStatefulWidget
+// is not an option. Instead we're using a ConsumerWidget.
+
+class ProductScreen extends ConsumerWidget {
   final String productId;
 
   const ProductScreen({
@@ -11,25 +16,25 @@ class ProductScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _ProductScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final productState = ref.watch(productProvider(productId));
 
-class _ProductScreenState extends ConsumerState<ProductScreen> {
-
-  @override
-  void initState() {
-    super.initState();
-    ref.read(productProvider(widget.productId).notifier);
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit product'),
+        title: const Text('Edit Product'),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.camera_alt_rounded),
+          )
+        ],
       ),
       body: Center(
-        child: Text(widget.productId),
+        child: Text(productState.product?.title ?? 'Loading'),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.save_rounded),
       ),
     );
   }
